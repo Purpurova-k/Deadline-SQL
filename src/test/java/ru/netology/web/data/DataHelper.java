@@ -19,18 +19,14 @@ public class DataHelper {
         return new AuthInfo("vasya", "qwerty123");
     }
 
-    public static AuthInfo getOtherAuthInfo(AuthInfo original) {
-        return new AuthInfo("petya", "123qwerty");
+    public static AuthInfo getOtherAuthInfo() {
+        var faker = new Faker();
+        return new AuthInfo("vasya", faker.internet().password());
     }
 
     public static String getRandomLogin() {
         var faker = new Faker();
         return faker.name().username();
-    }
-
-    public static String getRandomPassword() {
-        var faker = new Faker();
-        return faker.internet().password();
     }
 
     public static String getRandomVerificationCode() {

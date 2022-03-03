@@ -1,8 +1,6 @@
 package ru.netology.web.page;
 
 import com.codeborne.selenide.SelenideElement;
-import ru.netology.web.data.DataHelper;
-import ru.netology.web.data.DbHelper;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -23,8 +21,10 @@ public class VerificationPage {
         return new DashboardPage();
     }
 
-    public void errorNotificationShouldBeVisible() {
+    public void inValidVerify(String verificationCode) {
+        codeField.setValue(verificationCode);
+        verifyButton.click();
         errorNotification.shouldBe(visible);
-        $("[data-test-id=error-notification] .notification__content").shouldHave(text("Ошибка! Неверно указан код! Попробуйте еще раз."));
+        $("[data-test-id=error-notification] .notification__content").shouldHave(text("Ошибка! Неверно указан код! Попробуйте ещё раз."));
     }
 }

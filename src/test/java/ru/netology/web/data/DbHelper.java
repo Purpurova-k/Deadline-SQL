@@ -28,29 +28,25 @@ public class DbHelper {
 
 
     @SneakyThrows
-    public static String getPassword(int id) {
-        return runner.query(conn, "SELECT password FROM users WHERE id = " + id, new ScalarHandler<>());
+    public static String getVerificationCode(DataHelper.AuthInfo authInfo) {
+        String login = authInfo.getLogin();
+        var codeSQL = "SELECT code FROM auth_codes JOIN users ON auth_codes.user_id = users.id WHERE users.login = ?;";
+        return runner.query(conn, codeSQL, new ScalarHandler<>(), login);
     }
 
 
     @SneakyThrows
-    public static String getVerificationCode() {
-        return runner.query(conn, "SELECT code FROM auth_codes;", new ScalarHandler<>());
-    }
-
-
-    @SneakyThrows
-    public static void addUser(int id) {
+    public static void addUser(int id, String password) {
         runner.update(conn, "INSERT INTO users(id, login, password) VALUES(?, ?, ?);",
-                id, DataHelper.getRandomLogin(), DataHelper.getRandomPassword());
+                id, DataHelper.getRandomLogin(), password);
     }
 
 
     @SneakyThrows
     public static void cleanAllTables() {
-        runner.execute(conn, "DELETE FROM users;");
-        runner.execute(conn, "DELETE FROM cards;");
-        runner.execute(conn, "DELETE FROM card_transactions;");
-        runner.execute(conn, "DELETE FROM auth_codes;");
+        runner.execute(conn, "DELETE FROM app.auth_codes;");
+        runner.execute(conn, "DELETE FROM app.cards;");
+        runner.execute(conn, "DELETE FROM app.card_transactions;");
+        runner.execute(conn, "DELETE FROM app.users;");
     }
 }
