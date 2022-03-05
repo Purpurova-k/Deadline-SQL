@@ -14,20 +14,25 @@ public class LoginPage {
     private SelenideElement loginButton = $("[data-test-id=action-login]");
     private SelenideElement errorNotification = $("[data-test-id=error-notification]");
 
-
-    public VerificationPage validLogin(DataHelper.AuthInfo info) {
+    public void login(DataHelper.AuthInfo info) {
         loginField.setValue(info.getLogin());
         passwordField.setValue(info.getPassword());
-        loginButton.click();;
+        loginButton.click();
+    }
+
+    public void assertErrorNotificationVisible() {
+        errorNotification.shouldBe(visible);
+        $("[data-test-id=error-notification] .notification__content").shouldHave(text("Ошибка! Неверно указан логин или пароль"));
+    }
+
+    public VerificationPage validLogin(DataHelper.AuthInfo info) {
+        login(info);
         return new VerificationPage();
     }
 
     public void inValidLogin(DataHelper.AuthInfo info) {
-        loginField.setValue(info.getLogin());
-        passwordField.setValue(info.getPassword());
-        loginButton.click();
-        errorNotification.shouldBe(visible);
-        $("[data-test-id=error-notification] .notification__content").shouldHave(text("Ошибка! Неверно указан логин или пароль"));
+        login(info);
+        assertErrorNotificationVisible();
     }
 
     public void clearFields() {

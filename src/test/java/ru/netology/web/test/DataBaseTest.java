@@ -1,20 +1,18 @@
 package ru.netology.web.test;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.netology.web.data.DataHelper;
 import ru.netology.web.data.DbHelper;
 import ru.netology.web.page.LoginPage;
 
 import static com.codeborne.selenide.Selenide.open;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.netology.web.data.DataHelper.*;
 import static ru.netology.web.data.DbHelper.getLogin;
 import static ru.netology.web.data.DbHelper.getVerificationCode;
 
 public class DataBaseTest {
 
-    String password = "$2a$10$JlkjRmwQFhPbckpr2MXqH.2ts2PJled0sfDrWhR5P2n7.BUyDu/76";
 
     @BeforeEach
     void setUp() {
@@ -22,8 +20,8 @@ public class DataBaseTest {
     }
 
 
-    @AfterEach
-    void cleanAllTables() {
+    @AfterAll
+    static void cleanAllTables() {
         DbHelper.cleanAllTables();
     }
 
@@ -37,7 +35,7 @@ public class DataBaseTest {
 
 
     @Test
-    void shouldWarnIfLoginIncorrect() {
+    void shouldWarnIfPasswordIncorrect() {
         LoginPage loginPage = new LoginPage();
         loginPage.inValidLogin(getOtherAuthInfo());
     }
@@ -50,21 +48,29 @@ public class DataBaseTest {
     }
 
 
+    // Падающий тест
     @Test
     void shouldBlockSystemAfterThreeTimesIncorrectPassword() {
         LoginPage loginPage = new LoginPage();
-        loginPage.validLogin(getOtherAuthInfo());
-        loginPage.clearFields();
         loginPage.inValidLogin(getOtherAuthInfo());
         loginPage.clearFields();
         loginPage.inValidLogin(getOtherAuthInfo());
-        //TODO: где и что должно блокироваться, уведомление или пользователь блокируется?
+        loginPage.clearFields();
+        loginPage.inValidLogin(getOtherAuthInfo());
+
+        String login = DataHelper.getOtherAuthInfo().getLogin();
+        String userStatus = DbHelper.getUserStatus(login);
+
+        loginPage.assertErrorNotificationVisible();
+        assertEquals("blocked", userStatus);
     }
 
 
     @Test
     void shouldAddUserAndLogin() {
-        DbHelper.addUser(100, password);
+        var encryptedPassword = DataHelper.getPassword().getEncryptedPassword();
+        var password = DataHelper.getPassword().getPassword();
+        DbHelper.addUser(100, encryptedPassword);
         var user = new AuthInfo(getLogin(100), password);
         var verificationPage = new LoginPage().validLogin(user);
         verificationPage.validVerify(getVerificationCode(user));

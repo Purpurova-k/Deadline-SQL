@@ -49,4 +49,11 @@ public class DbHelper {
         runner.execute(conn, "DELETE FROM app.card_transactions;");
         runner.execute(conn, "DELETE FROM app.users;");
     }
+
+
+    @SneakyThrows
+    public static String getUserStatus(String login) {
+        var codeSQL = "SElECT status FROM users WHERE login = ?;";
+        return runner.query(conn, codeSQL, new ScalarHandler<>(), login);
+    }
 }

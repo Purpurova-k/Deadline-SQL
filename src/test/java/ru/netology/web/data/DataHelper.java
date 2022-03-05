@@ -26,11 +26,23 @@ public class DataHelper {
 
     public static String getRandomLogin() {
         var faker = new Faker();
-        return faker.name().username();
+        return faker.name().firstName().toLowerCase();
     }
 
     public static String getRandomVerificationCode() {
         var faker = new Faker();
         return faker.number().digits(5);
     }
+
+
+    @Value
+    public static class PasswordInfo {
+        private String password;
+        private String encryptedPassword;
+    }
+
+    public static PasswordInfo getPassword() {
+        return new PasswordInfo("qwerty123", "$2a$10$H4Gl9LRlQdHQT62fsio9c.OErcZL2yAAoo8K5wQfcJ.Ay/0jkPGZ.");
+    }
+
 }
