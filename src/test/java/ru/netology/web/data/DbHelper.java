@@ -30,15 +30,15 @@ public class DbHelper {
     @SneakyThrows
     public static String getVerificationCode(DataHelper.AuthInfo authInfo) {
         String login = authInfo.getLogin();
-        var codeSQL = "SELECT code FROM auth_codes JOIN users ON auth_codes.user_id = users.id WHERE users.login = ?;";
+        var codeSQL = "SELECT code FROM auth_codes JOIN users ON auth_codes.user_id = users.id WHERE users.login = ? ORDER BY created DESC LIMIT 1;";
         return runner.query(conn, codeSQL, new ScalarHandler<>(), login);
     }
 
 
     @SneakyThrows
-    public static void addUser(int id, String password) {
+    public static void addUser(int id, String login, String password) {
         runner.update(conn, "INSERT INTO users(id, login, password) VALUES(?, ?, ?);",
-                id, DataHelper.getRandomLogin(), password);
+                id, login, password);
     }
 
 

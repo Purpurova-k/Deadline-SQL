@@ -70,7 +70,7 @@ public class DataBaseTest {
     void shouldAddUserAndLogin() {
         var encryptedPassword = DataHelper.getPassword().getEncryptedPassword();
         var password = DataHelper.getPassword().getPassword();
-        DbHelper.addUser(100, encryptedPassword);
+        DbHelper.addUser(100, getRandomLogin(), encryptedPassword);
         var user = new AuthInfo(getLogin(100), password);
         var verificationPage = new LoginPage().validLogin(user);
         verificationPage.validVerify(getVerificationCode(user));
